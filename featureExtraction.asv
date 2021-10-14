@@ -1,0 +1,51 @@
+%% Feature Selection
+
+
+%% SNR sliding window
+
+% (WSize: 50,100,300ms)
+% seconds -> (WSize: 0.05, 0.1, 0.3)
+% (Olap: 0,0.25,0.75)
+WSize = 0.1; % window size in s
+Olap = 0; % overlap percentage
+
+WSize = floor(WSize*fs);	    % length of each data frame
+nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
+hop = WSize-nOlap;	          % amount to advance for next data frame
+
+% Set segmentation time of start and end for sample
+beforeTrig = 0;
+afterTrig = 1;
+% Trials with error
+for channel = 1:16
+    for i = 1:length(errorIndex)
+
+        startSamp = event.position(errorIndex(i))-beforeTrig*fs;
+        endSamp = event.position(errorIndex(i))+afterTrig*fs;
+        trial = s_a(startSamp:endSamp,channel);
+        
+        
+        % move window with certain overlap, calc SNR value
+        nx = length(trial);	            % length of input vector
+        len = fix((nx - (WSize-hop))/hop);	% length of output vector = total frames
+        for j = 1:len
+            segment = filteredSignal(((i-1)*hop+1):((i-1)*hop+WSize));
+            MAV_feature(j) = mean(abs(segment));
+            VAR_feature(i) = (1/(length(segment))) * sum((segment - mean(segment)).^2);
+
+            % re-build the label vector to match it with the feature vector
+            % the label of a frame will only be 1 (stimulation occurred) if the entirety of the frame is within a stimulation pulse
+            featureLabels(i) = sum(arrayfun(@(t) ((i-1)*hop+1) >= Rise1(t) && ((i-1)*hop+WSize) <= Fall1(t), 1:length(Rise1)));
+        end
+        
+        
+        
+        
+      
+        
+        
+        segSNR(:,i,channel) ;
+
+    end
+end
+
