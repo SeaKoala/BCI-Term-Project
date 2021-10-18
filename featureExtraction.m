@@ -82,7 +82,7 @@ for channel = 1:16
             minLoc_ER(frame,i,channel) = minLoc;
             
             
-            meanVoltage_NE(frame,i,channel) = mean(segment);
+            meanVoltage_ER(frame,i,channel) = mean(segment);
             
             
             
@@ -101,7 +101,7 @@ for channel = 1:16
         
         % amplitude
         voltageTrials_NE(:,i,channel) = trial;
-        figure;plot(trial);
+        % figure;plot(trial);
    
         % freq
         % thetaPower_NE(:,i,channel) = bandpower(trial(200:500),fs,[4 7]);
@@ -116,7 +116,7 @@ for channel = 1:16
         len = fix((nx - (WSize-hop))/hop);	% length of output vector = total frames
         for frame = 1:len
             segment = trial(((frame-1)*hop+1):((frame-1)*hop+WSize));
-            figure;plot(segment);
+            % figure;plot(segment);
             
             varVoltage_NE(frame,i,channel) = var(segment);
             
@@ -137,6 +137,10 @@ for channel = 1:16
             [minVal,minLoc] = min(segment);
             minVal_NE(frame,i,channel) = minVal;
             minLoc_NE(frame,i,channel) = minLoc;
+            
+            
+            meanVoltage_NE(frame,i,channel) = mean(segment);
+
             
             
             

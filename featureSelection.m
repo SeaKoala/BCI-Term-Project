@@ -11,7 +11,7 @@
 channel = 4;
 
 features_ER = mean(varVoltage_ER,2);
-reatures_Ex = reshape(features_ER, [10,16]);
+features_ER = reshape(features_ER, [10,16]);
 
 response = ones(16,1);
 
