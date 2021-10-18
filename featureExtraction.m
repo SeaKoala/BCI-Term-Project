@@ -7,7 +7,7 @@
 % (WSize: 50,100,300ms) seconds -> (WSize: 0.05, 0.1, 0.3)
 % (Olap: 0,0.25,0.75)
 WSize = 0.1; % window size in s
-Olap = 0.50; % overlap percentage
+Olap = 0; % overlap percentage
 WSize = floor(WSize*fs);	    % length of each data frame
 nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
 hop = WSize-nOlap;	          % amount to advance for next data frame

@@ -8,12 +8,18 @@
 % Feature 6: theta bandpower 
 
 
-channel = 4;
-
-features_ER = mean(varVoltage_ER,2);
-features_ER = reshape(features_ER, [10,16]);
-
-response = ones(16,1);
+featMatrix = [500, 10*1*1]; % number of trials, frames * channels * features types
+y= [zeros(406,1);ones(94,1)];
+for channel = 1:1
+        for frame = 1:len
+            for trial = 1:length(NEIndex)
+            featMatrix(trial, frame)= maxVal_NE(len, trial, 1);
+            end
+            for trial = 1:length(errorIndex)
+                featMatrix(trial+length(NEIndex), frame)= maxVal_ER(len, trial, 1);
+            end
+    end
+end
 
 
 
@@ -21,6 +27,6 @@ response = ones(16,1);
 
 %% mdl = fscnca(X,Y)
 
-
+mdl = fscnca(featMatrix,y)
 
 
