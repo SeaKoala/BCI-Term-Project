@@ -1,7 +1,7 @@
 %% Feature Selection
 
 
-%% SNR sliding window
+%% Sliding window analysis parameters
 
 % Sliding window parameters
 % (WSize: 50,100,300ms) seconds -> (WSize: 0.05, 0.1, 0.3)
@@ -16,7 +16,7 @@ hop = WSize-nOlap;	          % amount to advance for next data frame
 beforeTrig = 0;
 afterTrig = 1;
 
-% Trials with error
+%% Trials with error
 for channel = 1:16
     for i = 1:length(errorIndex)
 
@@ -24,15 +24,87 @@ for channel = 1:16
         endSamp = event.position(errorIndex(i))+afterTrig*fs;
         trial = s_a(startSamp:endSamp,channel);
         
-        % move window with certain overlap, calc SNR value
-        nx = length(trial);	            % length of input vector
+        % feature 1: voltage accross 512 sample window 
+        % dimensions: (amplitude x time sample X channel)
+        voltageTrials_ER(:,i,channel) = trial;
+        % figure;plot(trial);
+   
+       
+        % moving window
+        nx = length(trial);	% length of input vector
         len = fix((nx - (WSize-hop))/hop);	% length of output vector = total frames
-        for j = 1:len
-            segment = trial(((i-1)*hop+1):((i-1)*hop+WSize));
-            snrTrial(j,i,channel) = snr(segment/gAvgRest);
-        end
-        
-        
+        for frame = 1:len
+            segment = trial(((frame-1)*hop+1):((frame-1)*hop+WSize));
+            %figure;plot(segment);
+            
+            varVoltage_ER(frame,i,channel) = var(segment);
+            
+            % find one minimum and maximum at each segment
+            % it's harder to find all the minimum and maximum of the signal
+            % because of the variability of biological signals - each
+            % signal will have a different number of peaks and valleys
+            % which which is more difficult for account for in
+            % programming since it would result in each feature vector
+            % being a different size in each trial. Having 1 max and 1 min
+            % value at each window segment provides more consistnecy across
+            % all the different trials.
+            
+            [maxVal,maxLoc] = max(segment);
+            maxVal_ER(frame,i,channel) = maxVal;
+            maxLoc_ER(frame,i,channel) = maxLoc;
+            
+            [minVal,minLoc] = min(segment);
+            minVal_ER(frame,i,channel) = minVal;
+            minLoc_ER(frame,i,channel) = minLoc;
+            
+        end         
     end
 end
+
+%%  Trials with NO error
+
+for channel = 1:16
+    for i = 1:length(NEIndex)
+
+        startSamp = event.position(NEIndex(i))-beforeTrig*fs;
+        endSamp = event.position(NEIndex(i))+afterTrig*fs;
+        trial = s_a(startSamp:endSamp,channel);
+        
+        % feature 1: voltage accross 512 sample window 
+        % dimensions: (amplitude x time sample X channel)
+        voltageTrials_NE(:,i,channel) = trial;
+        % figure;plot(trial);
+   
+       
+        % moving window
+        nx = length(trial);	% length of input vector
+        len = fix((nx - (WSize-hop))/hop);	% length of output vector = total frames
+        for frame = 1:len
+            segment = trial(((frame-1)*hop+1):((frame-1)*hop+WSize));
+            %figure;plot(segment);
+            
+            varVoltage_NE(frame,i,channel) = var(segment);
+            
+            % find one minimum and maximum at each segment
+            % it's harder to find all the minimum and maximum of the signal
+            % because of the variability of biological signals - each
+            % signal will have a different number of peaks and valleys
+            % which which is more difficult for account for in
+            % programming since it would result in each feature vector
+            % being a different size in each trial. Having 1 max and 1 min
+            % value at each window segment provides more consistnecy across
+            % all the different trials.
+            
+            [maxVal,maxLoc] = max(segment);
+            maxVal_NE(frame,i,channel) = maxVal;
+            maxLoc_NE(frame,i,channel) = maxLoc;
+            
+            [minVal,minLoc] = min(segment);
+            minVal_NE(frame,i,channel) = minVal;
+            minLoc_NE(frame,i,channel) = minLoc;
+            
+        end         
+    end
+end
+
 
