@@ -119,6 +119,7 @@ title("weights of min")
 %% Heatmap
 heat = reshape(mdl.FeatureWeights,[len,16]);
 figure;
-heatmap(heat);
-xlabel('Frame')
-title("weights of min")
+heatmap(ranks);
+xlabel('Channels')
+ylabel('frame')
+title("weights of mean")
