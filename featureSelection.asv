@@ -1,28 +1,131 @@
 %% Feature Selection
 
-% Feature 1: amplitude 
-% Feature 2: variance
-% Feature 3: max
-% Feature 4: min
-% Feature 5: snr compared to gavg baseline
-% Feature 6: theta bandpower 
+%% Feature: mean voltage
 
-
-featMatrix = [500, 10*1*1]; % number of trials, frames * channels * features types
-y= [zeros(406,1);ones(94,1)];
-for channel = 1:1
-        for frame = 1:len
-            for trial = 1:length(NEIndex)
-            featMatrix(trial, frame)= maxVal_NE(len, trial, 1);
+for channel = 1:16
+    for frame = 1:len
+        for trial = 1:length(errorIndex)
+           featMatrix_mean(trial,channel*len-len+frame) = meanVoltage_ER(frame,trial,channel);
         end
-    end
+        for trial = 1:length(NEIndex)        
+            featMatrix_mean(trial+length(errorIndex),channel*len-len+frame) = meanVoltage_NE(frame,trial,channel);      
+        end
+    end  
 end
 
+y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)]
+
+%% Feature ranking
+mdl = fscnca(featMatrix_mean,y)
+figure;
+plot(mdl.FeatureWeights,'ro')
+grid on
+xlabel('Feature index')
+ylabel('Feature weight')
+title("weights of mean")
+%% Heatmap
+heat = reshape(mdl.FeatureWeights,[16,len]);
+figure;
+heatmap(heat);
+xlabel('Frame')
+title("weights of mean")
+
+%% Feature: var voltage
+
+for channel = 1:16
+    for frame = 1:len
+        for trial = 1:length(errorIndex)
+           featMatrix_var(trial,channel*len-len+frame) = varVoltage_ER(frame,trial,channel);
+        end
+        for trial = 1:length(NEIndex)        
+            featMatrix_var(trial+length(errorIndex),channel*len-len+frame) = varVoltage_NE(frame,trial,channel);      
+        end
+    end  
+end
+
+y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)]
+
+%% Feature ranking
+mdl = fscnca(featMatrix_var,y)
+figure;
+plot(mdl.FeatureWeights,'ro')
+grid on
+xlabel('Feature index')
+ylabel('Feature weight')
+title("weights of var")
+
+%% Heatmap
+heat = reshape(mdl.FeatureWeights,[16,len]);
+figure;
+heatmap(heat);
+xlabel('Frame')
+title("weights of var")
+
+%% Feature: max voltage
+
+for channel = 1:16
+    for frame = 1:len
+        for trial = 1:length(errorIndex)
+           featMatrix_max(trial,channel*len-len+frame) = maxVoltage_ER(frame,trial,channel);
+        end
+        for trial = 1:length(NEIndex)        
+            featMatrix_max(trial+length(errorIndex),channel*len-len+frame) = maxVoltage_NE(frame,trial,channel);      
+        end
+    end  
+end
+
+y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)]
+
+%% Feature ranking
+mdl = fscnca(featMatrix_max,y)
+figure;
+plot(mdl.FeatureWeights,'ro')
+grid on
+xlabel('Feature index')
+ylabel('Feature weight')
+title("weights of max")
+
+%% Heatmap
+heat = reshape(mdl.FeatureWeights,[16 len]);
+figure;
+heatmap(heat);
+xlabel('Frame')
+title("weights of max")
+
+%% Feature: min voltage
+
+for channel = 1:16
+    for frame = 1:len
+        for trial = 1:length(errorIndex)
+           featMatrix_min(trial,channel*len-len+frame) = minVoltage_ER(frame,trial,channel);
+        end
+        for trial = 1:length(NEIndex)        
+            featMatrix_min(trial+length(errorIndex),channel*len-len+frame) = minVoltage_NE(frame,trial,channel);      
+        end
+    end  
+end
+
+y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)]
+
+%% Feature ranking
+mdl = fscnca(featMatrix_min,y)
+figure;
+plot(mdl.FeatureWeights,'ro')
+grid on
+xlabel('Feature index')
+ylabel('Feature weight')
+title("weights of min")
+
+%% Heatmap
+heat = reshape(mdl.FeatureWeights,[16 len]);
+figure;
+heatmap(heat);
+xlabel('Frame')
+title("weights of min")
 
 
 
 
-%% mdl = fscnca(X,Y)
 
 
 
