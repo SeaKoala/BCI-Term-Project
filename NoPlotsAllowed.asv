@@ -2,13 +2,12 @@
 clc
 clear
 close all
-path = {'ErrPSpeller/Subject1/Offline', 'ErrPSpeller/Subject1/S2','ErrPSpeller/Subject1/S3', 'ErrPSpeller/Subject2/Offline', 'ErrPSpeller/Subject2/S2','ErrPSpeller/Subject2/S3', 'ErrPSpeller/Subject4/Offline', 'ErrPSpeller/Subject4/S2','ErrPSpeller/Subject4/S3', 'ErrPSpeller/Subject5/Offline', 'ErrPSpeller/Subject5/S2','ErrPSpeller/Subject5/S3'};
+path = 'ErrPSpeller/Subject1/Offline', 'ErrPSpeller/Subject1/S2','ErrPSpeller/Subject1/S3', 'ErrPSpeller/Subject2/Offline', 'ErrPSpeller/Subject2/S2','ErrPSpeller/Subject2/S3', 'ErrPSpeller/Subject4/Offline', 'ErrPSpeller/Subject4/S2','ErrPSpeller/Subject4/S3', 'ErrPSpeller/Subject5/Offline', 'ErrPSpeller/Subject5/S2','ErrPSpeller/Subject5/S3'};
 % path = 'ErrPSpeller/Subject1/Offline';
 
 %% for each subject
 for s=1:length(path)
-% for s = 10
-    [signals, event] = loadData(path{s});
+    [signals, event] = loadData(path(i));
     signals = signals(:, 1:16);
     fs = 512;
     load chanlocs16.mat chanlocs16
@@ -33,17 +32,16 @@ for s=1:length(path)
             NEIndex(end+1) = i;
         end
     end
-    NEIndex = NEIndex(1:end-1);
 
 
     %% Grand Average
     beforeTrig = 0; % seconds of signal to be recorded before start of trial
     afterTrig = 1; % seconds of signal after trial start
 
-    GavgError = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    GavgNE = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    GavgRectError = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    GavgRectNE = zeros(round(fs*(beforeTrig+afterTrig)),16);
+    GavgError = zeros(fs*(beforeTrig+afterTrig),16);
+    GavgNE = zeros(fs*(beforeTrig+afterTrig),16);
+    GavgRectError = zeros(fs*(beforeTrig+afterTrig),16);
+    GavgRectNE = zeros(fs*(beforeTrig+afterTrig),16);
     for(c =1:16) % for every channel
         for(i=1:length(errorIndex)) % for every trial in error trial index array
             for(j = 1:length(GavgError)) % for length of trial (endsample - start sample)
@@ -64,7 +62,7 @@ for s=1:length(path)
     end
 
     %% Feature Extraction
-    WSize = .05;
+    WSize = .25;
     Olap = 0;
     [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
 
@@ -77,7 +75,7 @@ for s=1:length(path)
     
    %%
    figure;
-   sgtitle(path{s});
+   title(path(i));
     subplot(2,2,1)
     heatmap(meanRanks);
     xlabel('Channels')
