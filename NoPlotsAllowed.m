@@ -6,8 +6,8 @@ path = {'ErrPSpeller/Subject1/Offline', 'ErrPSpeller/Subject1/S2','ErrPSpeller/S
 % path = 'ErrPSpeller/Subject1/Offline';
 
 %% for each subject
-for s=1:length(path)
-% for s = 10
+for s=10:12
+% for s = 12
     [signals, event] = loadData(path{s});
     signals = signals(:, 1:16);
     fs = 512;
@@ -64,38 +64,158 @@ for s=1:length(path)
     end
 
     %% Feature Extraction
-    WSize = .05;
+    WSize = .1;
     Olap = 0;
     [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
 
+    %% TOPO PLOts
+    t = s-9;
+    subplot(3,2,2*t-1)
+    sgtitle("Mean of time[300-400]ms")
+% figure
+    title(path{s} + ":   ER");
+    topoplot(mean(meanER(4,:,:)), chanlocs16);
+    colorbar
+    subplot(3,2,2*t)
+% figure
+    title(path{s} + ":   NE");
+    topoplot(mean(meanNE(4,:,:)), chanlocs16);
+    colorbar
+
+    
+    
+%     sgtitle(path{1})
+%     subplot(1,3,s)
+%     hold on
+%     plot(GavgNE(:,4))
+%     plot(GavgError(:,4))
+%     title(path{s});
+%     hold off
+    
+     
     %% feature ranking
-    Y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)];
-    meanRanks = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
-    maxRanks = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
-    minRanks = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
-    varRanks = rankFeatures(len, varER, varNE, errorIndex, NEIndex, Y);
+%     Y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)];
+% 
+%     meanRanks = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
+%     maxRanks = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
+%     minRanks = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
+%     varRanks = rankFeatures(len, varER, varNE, errorIndex, NEIndex, Y);
+%     
+%     frMean = [6,2,5,4];
+%     chMean = [16,10,8,1];
+%     frMin = [1,5,5,6];
+%     chMin = [14,7,4,9];
+%     frMax = [4,5,2,2];
+%     chMax = [14,8, 2, 8];
+%     
+%     l = 4
+%     meanRanks(frMean(l), chMean(l))
+%     minRanks(frMean(l), chMean(l))
+%     maxRanks(frMean(l), chMean(l))
+    
+    %%
+    
+    
+%     meanBest = zeros(3,3);
+%     varBest = zeros(3,3);
+%     minBest = zeros(3,3);
+%     maxBest = zeros(3,3);
+%     for i =1:3
+%         [meanBest(1,i), meanBest(2,i)] = find(ismember(meanRanks, max(meanRanks(:))));
+%         meanBest(3,i) = max(meanRanks(:));
+%         meanRanks(meanBest(1,i), meanBest(2,i)) = 0;
+%         
+%         [varBest(1,i), varBest(2,i)] = find(ismember(varRanks, max(varRanks(:))));
+%         varBest(3,i) = max(varRanks(:));
+%         varRanks(varBest(1,i), varBest(2,i)) = 0;
+%         
+%         [minBest(1,i), minBest(2,i)] = find(ismember(minRanks, max(minRanks(:))));
+%         minBest(3,i) = max(minRanks(:));
+%         minRanks(minBest(1,i), minBest(2,i)) = 0;
+%         
+%         [maxBest(1,i), maxBest(2,i)] = find(ismember(maxRanks, max(maxRanks(:))));
+%         maxBest(3,i) = max(maxRanks(:));
+%         maxRanks(maxBest(1,i), maxBest(2,i)) = 0;
+%     end
+    
+%     meanBest = max(meanRanks(:));
+%     minBest = max(minRanks, 3);
+%     maxBest = max(maxRanks, 3);
+%     varBest = max(varRanks, 3);
+    
+%     [rowsOfMaxes colsOfMaxes] = find(A == maxValue);
     
    %%
-   figure;
-   sgtitle(path{s});
-    subplot(2,2,1)
-    heatmap(meanRanks);
-    xlabel('Channels')
-    ylabel('frame')
-    title("weights of Mean")
-    subplot(2,2,2)
-    heatmap(varRanks);
-    xlabel('Channels')
-    ylabel('frame')
-    title("weights of Var")
-    subplot(2,2,3)
-    heatmap(minRanks);
-    xlabel('Channels')
-    ylabel('frame')
-    title("weights of Min")
-    subplot(2,2,4)
-    heatmap(maxRanks);
-    xlabel('Channels')
-    ylabel('frame')
-    title("weights of Max")
+%    
+% % figure('units','normalized','Position',[0.1,0.1,0.38,0.6])
+% figure
+% sgtitle(path{s})
+% % if s==1
+%     subplot(1,3,1)
+%     x = [reshape(meanNE(4,:,1), length(NEIndex), 1); reshape(meanER(4,:,1), length(errorIndex), 1)];
+%     g1 = repmat({'NE'},length(NEIndex),1);
+%     g2 = repmat({'ER'},length(errorIndex),1);
+%     g = [g1; g2];
+%     m = [mean(meanNE(4,:,1)); mean(meanER(4,:,1))];
+%     hold on
+%     boxplot(x, g)
+%     plot(m, '*')
+%     hold off
+%     title('Mean Fr 4, Ch 1');
+% % end
+% % if s==2
+%     subplot(1,3,2)
+%     x = [reshape(minNE(6,:,9), length(NEIndex), 1); reshape(minER(6,:,9), length(errorIndex), 1)];
+%     g1 = repmat({'NE'},length(NEIndex),1);
+%     g2 = repmat({'ER'},length(errorIndex),1);
+%     g = [g1; g2];
+%     m = [mean(minNE(6,:,9)); mean(minER(6,:,9))];
+%     hold on
+%     boxplot(x, g)
+%     plot(m, '*')
+%     hold off
+%     title('Min Fr 6, Ch 9');
+% % end
+% 
+% % if s ==3
+%     subplot(1,3,3)
+%     x = [reshape(maxNE(2,:,8), length(NEIndex), 1); reshape(maxER(2,:,8), length(errorIndex), 1)];
+%     g1 = repmat({'NE'},length(NEIndex),1);
+%     g2 = repmat({'ER'},length(errorIndex),1);
+%     g = [g1; g2];
+%     m = [mean(maxNE(2,:,8)); mean(maxER(2,:,8))];
+%     hold on
+%     boxplot(x, g)
+%     plot(m, '*')
+%     hold off
+%     title('Max Fr 2, Ch 8');
+% end
+
+
+%    figure;
+%    sgtitle(path{s});
+%     subplot(2,2,1)
+%     h=heatmap(meanRanks);
+%     h.Colormap = hot;
+%     xlabel('Channels')
+%     ylabel('frame')
+%     title("weights of Mean")
+%     subplot(2,2,2)
+%     h= heatmap(varRanks);
+%         h.Colormap = hot;
+%     xlabel('Channels')
+%     ylabel('frame')
+%     title("weights of Var")
+%     subplot(2,2,3)
+%     h = heatmap(minRanks);
+%         h.Colormap = hot;
+%     xlabel('Channels')
+%     ylabel('frame')
+%     title("weights of Min")
+%     subplot(2,2,4)
+%     h = heatmap(maxRanks);
+%         h.Colormap = hot;
+%     xlabel('Channels')
+%     ylabel('frame')
+%     title("weights of Max")
 end

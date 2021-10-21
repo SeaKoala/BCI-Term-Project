@@ -22,3 +22,17 @@ heatmap(maxRanks);
 xlabel('Channels')
 ylabel('frame')
 title("weights of Max")
+%%
+figure
+subplot(1,2,1)
+boxplot(maxER(4,:,14), "Er")
+subplot(1,2,2)
+boxplot(maxNE(4,:,14), "NE")
+
+
+
+
+
+
+%%
+% x = [maxNE(4,:,14), 1, length(NEIndex)); reshape(maxER(4,:,14), 1, length(errorIndex))];
