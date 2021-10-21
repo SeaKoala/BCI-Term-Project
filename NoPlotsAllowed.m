@@ -64,7 +64,7 @@ for s=1:length(path)
     end
 
     %% Feature Extraction
-    WSize = .05;
+    WSize = .2;
     Olap = 0;
     [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
 
