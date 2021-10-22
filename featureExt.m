@@ -3,6 +3,7 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featu
     nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
     hop = WSize-nOlap;	          % amount to advance for next data frame
 
+    
     for channel = 1:16
         for i = 1:length(errorIndex)
 
@@ -34,10 +35,10 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featu
     end
 
     for channel = 1:16
-        for i = 1:length(NEIndex)
+        for f = 1:length(NEIndex)
 
-            startSamp = event(NEIndex(i))-beforeTrig*fs;
-            endSamp = event(NEIndex(i))+afterTrig*fs;
+            startSamp = event(NEIndex(f))-beforeTrig*fs;
+            endSamp = event(NEIndex(f))+afterTrig*fs;
             trial = s_a(startSamp:endSamp,channel);
 
             % moving window
@@ -47,17 +48,17 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featu
                 segment = trial(((frame-1)*hop+1):((frame-1)*hop+WSize));
                 % figure;plot(segment);
 
-                varNE(frame,i,channel) = var(segment);
+                varNE(frame,f,channel) = var(segment);
 
                 [maxVal,maxLoc] = max(segment);
-                maxNE(frame,i,channel) = maxVal;
-                maxLoc_NE(frame,i,channel) = maxLoc;
+                maxNE(frame,f,channel) = maxVal;
+                maxLoc_NE(frame,f,channel) = maxLoc;
 
                 [minVal,minLoc] = min(segment);
-                minNE(frame,i,channel) = minVal;
-                minLoc_NE(frame,i,channel) = minLoc;
+                minNE(frame,f,channel) = minVal;
+                minLoc_NE(frame,f,channel) = minLoc;
 
-                meanNE(frame,i,channel) = mean(segment);
+                meanNE(frame,f,channel) = mean(segment);
 
             end         
         end
