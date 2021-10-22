@@ -66,7 +66,7 @@ for s=[1,4,7,10]
     i=0;
 
     %% Feature Extraction
-    WSize = .25;
+    WSize = .1;
     Olap = .5;
     [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
     

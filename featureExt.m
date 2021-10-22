@@ -1,4 +1,4 @@
-function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
+function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
     WSize = floor(WSize*fs);	    % length of each data frame
     nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
     hop = WSize-nOlap;	          % amount to advance for next data frame
@@ -29,6 +29,8 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featu
                 minLoc_ER(frame,i,channel) = minLoc;
 
                 meanER(frame,i,channel) = mean(segment);
+                
+                slopeER(frame,i,channel) = (segment(end) -segment(1))/length(segment);
 
             end         
         end
@@ -59,6 +61,8 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, len] = featu
                 minLoc_NE(frame,f,channel) = minLoc;
 
                 meanNE(frame,f,channel) = mean(segment);
+                
+                slopeNE(frame,f,channel) = (segment(end) -segment(1))/length(segment);
 
             end         
         end
