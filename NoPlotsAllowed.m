@@ -13,18 +13,9 @@ for s=[1,4,7,10]
     signals = signals(:, 1:16);
     fs = 512;
     load chanlocs16.mat chanlocs16
-    %% Fz, FC3, FC1, FCz, FC2, FC4, C3, C1, Cz, C2, C4, CP3, CP1, CPz, CP2, CP4
-    %% Filtering
-    f_a = [1 10]; % alpha band
-    f_b = [18 22]; % beta band
-    N = 5; % filter order
-    [A1, A2] = butter(N, [f_a(1) f_a(2)]*2 /fs);
-    % [B1, B2] = butter(N, [f_b(1) f_b(2)]*2 /fs);
-    s_a = filter(A1, A2,signals); 
-    % s_b = filter(B1, B2,signals); 
-
-    rectSignal = s_a(:,:).^2; % signal power
-
+    % Fz, FC3, FC1, FCz, FC2, FC4, C3, C1, Cz, C2, C4, CP3, CP1, CPz, CP2, CP4
+    
+    %% Sort data into classes
     errorIndex = []; % will contain trial number of every error trial
     NEIndex = []; % will contain trial number of every no error trial
     for i=1:length(event.type)
@@ -35,8 +26,20 @@ for s=[1,4,7,10]
         end
     end
     NEIndex = NEIndex(1:end-1);
+    
+    %% Filtering
+    % Spatial filtering
+    signals = spatialFiltering(signals,fs,event,errorIndex,NEIndex);
+    
+    f_a = [1 10]; % alpha band
+    f_b = [18 22]; % beta band
+    N = 5; % filter order
+    [A1, A2] = butter(N, [f_a(1) f_a(2)]*2 /fs);
+    % [B1, B2] = butter(N, [f_b(1) f_b(2)]*2 /fs);
+    s_a = filter(A1, A2,signals); 
+    % s_b = filter(B1, B2,signals); 
 
-
+    rectSignal = s_a(:,:).^2; % signal power
     %% Grand Average
     beforeTrig = 0; % seconds of signal to be recorded before start of trial
     afterTrig = 1; % seconds of signal after trial start
