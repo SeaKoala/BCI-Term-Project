@@ -8,7 +8,7 @@ path = {'ErrPSpeller/Subject1/Offline', 'ErrPSpeller/Subject1/S2','ErrPSpeller/S
 % minFeatures = zeros{4,3};
 % varFeatures = zeros{4,3};
 %% for each subject
-for s=[1,4,7,10]
+for s=[1] %,4,7,10]
     [signals, event] = loadData(path{s});
     signals = signals(:, 1:16);
     fs = 512;
@@ -77,52 +77,19 @@ for s=[1,4,7,10]
     %% feature ranking
     Y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)];
 
-%     meanRanks(:, :,s) = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
-%     maxRanks(:, :,s) = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
-%     minRanks(:, :,s) = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
+     meanRanks(:, :,s) = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
+     maxRanks(:, :,s) = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
+     minRanks(:, :,s) = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
 %     varRanks(:, :,s) = rankFeatures(len, varER, varNE, errorIndex, NEIndex, Y);
-    slopeRanks(:, :,s) = rankFeatures(len, slopeER, slopeNE, errorIndex, NEIndex, Y);
+%    slopeRanks(:, :,s) = rankFeatures(len, slopeER, slopeNE, errorIndex, NEIndex, Y);
     
-%     frMean = [6,2,5,4];
-%     chMean = [16,10,8,1];
-%     frMin = [1,5,5,6];
-%     chMin = [14,7,4,9];
-%     frMax = [4,5,2,2];
-%     chMax = [14,8, 2, 8];
-    %%
+
 
 %     [maxBest(s}] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
 %     [minBest(s}] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
 
 %     [varBest(s)] = findBestFeats(len, beforeTrig, afterTrig, varRanks);
-                  
-    
-%        figure;
-%    sgtitle(path{s});
-%     subplot(2,2,1)
-%     h=heatmap(meanRanks);
-%     h.Colormap = hot;
-%     xlabel('Channels')
-%     ylabel('frame')
-%     title("weights of Mean")
-%     subplot(2,2,2)
-%     h= heatmap(varRanks);
-%         h.Colormap = hot;
-%     xlabel('Channels')
-%     ylabel('frame')
-%     title("weights of Var")
-%     subplot(2,2,3)
-%     h = heatmap(minRanks);
-%         h.Colormap = hot;
-%     xlabel('Channels')
-%     ylabel('frame')
-%     title("weights of Min")
-%     subplot(2,2,4)
-%     h = heatmap(maxRanks);
-%         h.Colormap = hot;
-%     xlabel('Channels')
-%     ylabel('frame')
-%     title("weights of Max")
+  
     %% Find Best
     
     
@@ -156,8 +123,8 @@ for s=[1,4,7,10]
 %     [rowsOfMaxes colsOfMaxes] = find(A == maxValue);
 end
 %%
-%     [meanFeatures] = findBestFeats(len, beforeTrig, afterTrig, meanRanks);
-%     [maxFeatures] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
-%     [minFeatures] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
+     [meanFeatures] = findBestFeats(len, beforeTrig, afterTrig, meanRanks);
+     [maxFeatures] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
+     [minFeatures] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
 %     [varFeatures] = findBestFeats(len, beforeTrig, afterTrig, varRanks);
-    [slopeFeatures] = findBestFeats(len, beforeTrig, afterTrig, slopeRanks);
+%    [slopeFeatures] = findBestFeats(len, beforeTrig, afterTrig, slopeRanks);

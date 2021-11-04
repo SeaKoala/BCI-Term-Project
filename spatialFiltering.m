@@ -1,12 +1,12 @@
 %% Spatial Filtering
 
-function [car_signal] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
+function [signal_CSP] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
 
 %% CAR - Common Avg Reference
     channels = [1:16];
     for chan = 1:16  
         currentChanList =  channels(channels~=chan);  
-        car_signal(:,chan) = signal(:,chan) - mean(signal(:,currentChanList),2);      
+        signal(:,chan) = signal(:,chan) - mean(signal(:,currentChanList),2);      
     end
 
     
@@ -20,7 +20,7 @@ for channel = 1:16
     for i = 1:length(errorIndex)
         startSamp = event.position(errorIndex(i))-beforeTrig*fs;
         endSamp = event.position(errorIndex(i))+afterTrig*fs;
-        trial_error(chan,:,i) = signal(startSamp:endSamp,channel);
+        trial_error(channel,:,i) = signal(startSamp:endSamp,channel);
     end
 end
 
@@ -29,15 +29,22 @@ for channel = 1:16
     for i = 1:length(NEIndex)
         startSamp = event.position(NEIndex(i))-beforeTrig*fs;
         endSamp = event.position(NEIndex(i))+afterTrig*fs;
-        trial_NoError(chan,:,i) = signal(startSamp:endSamp,channel);
+        trial_NoError(channel,:,i) = signal(startSamp:endSamp,channel);
     end
 end
 
 
+GAVG_error(:,:) = mean(trial_error,3);
+GAVG_NoError(:,:) = mean(trial_NoError,3);
 
-for trial = 1:length(errorIndex)
-    [W, lambda, A] = csp(trial_error(:,:,trial), trial_NoError(:,:,trial));
-    weights(:,:,trial) = W;
+% Perform CSP on grand average of classes to get filter weights
+[W, lambda, A] = csp(GAVG_error,GAVG_NoError);
+
+% Apply filter to raw signal for spatial filtering
+% X_csp = W'*X;
+
+signal_CSP = W'*signal';
+signal_CSP = signal_CSP';
+
 end
-
 
