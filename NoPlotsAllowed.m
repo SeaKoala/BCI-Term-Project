@@ -3,12 +3,13 @@ clc
 clear
 close all
 path = {'ErrPSpeller/Subject1/Offline', 'ErrPSpeller/Subject1/S2','ErrPSpeller/Subject1/S3', 'ErrPSpeller/Subject2/Offline', 'ErrPSpeller/Subject2/S2','ErrPSpeller/Subject2/S3', 'ErrPSpeller/Subject4/Offline', 'ErrPSpeller/Subject4/S2','ErrPSpeller/Subject4/S3', 'ErrPSpeller/Subject5/Offline', 'ErrPSpeller/Subject5/S2','ErrPSpeller/Subject5/S3'};
-% path = 'ErrPSpeller/Subject1/Offline';
-% maxFeatures = zeros{4,3};
-% minFeatures = zeros{4,3};
-% varFeatures = zeros{4,3};
+% path 1-3 subject 1
+% path 4-6 subject 2
+% path 7-9 subject 4
+% path 10-12 subject 5
+
 %% for each subject
-for s=[1] %,4,7,10]
+for s=[1,4,7,10] %,4,7,10]
     [signals, event] = loadData(path{s});
     signals = signals(:, 1:16);
     fs = 512;
@@ -36,7 +37,7 @@ for s=[1] %,4,7,10]
     N = 5; % filter order
     [A1, A2] = butter(N, [f_a(1) f_a(2)]*2 /fs);
     % [B1, B2] = butter(N, [f_b(1) f_b(2)]*2 /fs);
-    s_a = filter(A1, A2,signals); 
+    s_a = filtfilt(A1, A2,signals); 
     % s_b = filter(B1, B2,signals); 
 
     rectSignal = s_a(:,:).^2; % signal power
@@ -70,61 +71,72 @@ for s=[1] %,4,7,10]
 
     %% Feature Extraction
     WSize = .25;
-    Olap = .5;
+    Olap = 0;
     [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
     
      
     %% feature ranking
     Y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)];
-
-     meanRanks(:, :,s) = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
-     maxRanks(:, :,s) = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
-     minRanks(:, :,s) = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
-%     varRanks(:, :,s) = rankFeatures(len, varER, varNE, errorIndex, NEIndex, Y);
+    
+    boxs(meanNE, meanER, NEIndex, errorIndex, 3, 7, s, path{s})
+%      meanRanks(:, :,s) = rankFeatures(len, meanER, meanNE, errorIndex, NEIndex, Y);
+%       maxRanks(:, :,s) = rankFeatures(len, maxER, maxNE, errorIndex, NEIndex, Y);
+%       minRanks(:, :,s) = rankFeatures(len, minER, minNE, errorIndex, NEIndex, Y);
+%    varRanks(:, :,s) = rankFeatures(len, varER, varNE, errorIndex, NEIndex, Y);meanFeatures
 %    slopeRanks(:, :,s) = rankFeatures(len, slopeER, slopeNE, errorIndex, NEIndex, Y);
     
-
-
-%     [maxBest(s}] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
-%     [minBest(s}] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
-
-%     [varBest(s)] = findBestFeats(len, beforeTrig, afterTrig, varRanks);
-  
-    %% Find Best
-    
-    
-%     meanBest = zeros(3,3);
-%     varBest = zeros(3,3);
-%     minBest = zeros(3,3);
-%     maxBest = zeros(3,3);
-%     for i =1:3
-%         [meanBest(1,i), meanBest(2,i)] = find(ismember(meanRanks, max(meanRanks(:))));
-%         meanBest(3,i) = max(meanRanks(:));
-%         meanRanks(meanBest(1,i), meanBest(2,i)) = 0;
-%         
-%         [varBest(1,i), varBest(2,i)] = find(ismember(varRanks, max(varRanks(:))));
-%         varBest(3,i) = max(varRanks(:));
-%         varRanks(varBest(1,i), varBest(2,i)) = 0;
-%         
-%         [minBest(1,i), minBest(2,i)] = find(ismember(minRanks, max(minRanks(:))));
-%         minBest(3,i) = max(minRanks(:));
-%         minRanks(minBest(1,i), minBest(2,i)) = 0;
-%         
-%         [maxBest(1,i), maxBest(2,i)] = find(ismember(maxRanks, max(maxRanks(:))));
-%         maxBest(3,i) = max(maxRanks(:));
-%         maxRanks(maxBest(1,i), maxBest(2,i)) = 0;
-%     end
-    
-%     meanBest = max(meanRanks(:));
-%     minBest = max(minRanks, 3);
-%     maxBest = max(maxRanks, 3);
-%     varBest = max(varRanks, 3);
-    
-%     [rowsOfMaxes colsOfMaxes] = find(A == maxValue);
 end
-%%
-     [meanFeatures] = findBestFeats(len, beforeTrig, afterTrig, meanRanks);
-     [maxFeatures] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
-     [minFeatures] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
+%% Find features with FS score > 1
+     [meanFeatures, meanSum, meanCount, meanMean] = findBestFeats(len, beforeTrig, afterTrig, meanRanks);
+      [maxFeatures, maxSum, maxCount, maxMean] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
+      [minFeatures, minSum, minCount, minMean] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
 %     [varFeatures] = findBestFeats(len, beforeTrig, afterTrig, varRanks);
 %    [slopeFeatures] = findBestFeats(len, beforeTrig, afterTrig, slopeRanks);
+%% plot histogram of best features
+% figure
+% sgtitle("offline only, .25 Wsize, 0 Olap, CAR, thresh = .5")
+% subplot(3,3,1)
+% heatmap(meanSum)
+% title("Sums of mean features")
+% subplot(3,3,2)
+% heatmap(meanCount)
+% title("Count of mean features")
+% subplot(3,3,3)
+% heatmap(meanMean)
+% title("Mean of mean features")
+% 
+% subplot(3,3,4)
+% heatmap(maxSum)
+% title("Sums of max features")
+% subplot(3,3,5)
+% heatmap(maxCount)
+% title("Count of max features")
+% subplot(3,3,6)
+% heatmap(maxMean)
+% title("Mean of max features")
+% 
+% subplot(3,3,7)
+% heatmap(minSum)
+% title("Sums of min features")
+% subplot(3,3,8)
+% heatmap(minCount)
+% title("Count of min features")
+% subplot(3,3,9)
+% heatmap(minMean)
+% title("Mean of min features")
+%% Box Plots
+
+function  boxs(xNE, xER, NEIndex, errorIndex, fr, ch, s, paths)
+    figure
+    x = [reshape(xNE(fr,:,ch), length(NEIndex), 1); reshape(xER(fr,:,ch), length(errorIndex), 1)];
+    g1 = repmat({'NE'},length(NEIndex),1);
+    g2 = repmat({'ER'},length(errorIndex),1);
+    g = [g1; g2];
+    m = [mean(xNE(fr,:,ch)); mean(xER(fr,:,ch))];
+    hold on
+    boxplot(x, g)
+    plot(m, '*')
+    hold off
+%     title('Mean Fr: ' + fr +' Ch: ' + ch);
+
+end

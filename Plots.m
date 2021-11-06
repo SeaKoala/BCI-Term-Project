@@ -77,7 +77,39 @@ sgtitle(path{s})
     plot(m, '*')
     hold off
     title('Max Fr 2, Ch 8');
+    
+    %% plot histogram of best features
+figure
+sgtitle("offline only, .25 Wsize, 0 Olap, CAR, thresh = .5")
+subplot(3,3,1)
+heatmap(meanSum)
+title("Sums of mean features")
+subplot(3,3,2)
+heatmap(meanCount)
+title("Count of mean features")
+subplot(3,3,3)
+heatmap(meanMean)
+title("Mean of mean features")
 
+subplot(3,3,4)
+heatmap(maxSum)
+title("Sums of max features")
+subplot(3,3,5)
+heatmap(maxCount)
+title("Count of max features")
+subplot(3,3,6)
+heatmap(maxMean)
+title("Mean of max features")
+
+subplot(3,3,7)
+heatmap(minSum)
+title("Sums of min features")
+subplot(3,3,8)
+heatmap(minCount)
+title("Count of min features")
+subplot(3,3,9)
+heatmap(minMean)
+title("Mean of min features")
 %% Topoplots
     t = s-9;
     subplot(3,2,2*t-1)
