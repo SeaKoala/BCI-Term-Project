@@ -32,7 +32,7 @@ function [signal_CSP] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
 %         trial_NoError(channel,:,i) = signal(startSamp:endSamp,channel);
 %     end
 % end
-% 
+
 % 
 % GAVG_error(:,:) = mean(trial_error,3);
 % GAVG_NoError(:,:) = mean(trial_NoError,3);

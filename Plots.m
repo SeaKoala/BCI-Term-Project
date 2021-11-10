@@ -1,5 +1,6 @@
 %% plots
-
+figure
+stem(mdl.FeatureWeights)
 %% heatmap of fischer score equivilant
    figure;
    sgtitle(path{s});
@@ -30,11 +31,12 @@
 
 
 %% Grand Average
-    sgtitle(path{1})
-    subplot(1,3,s)
+%     sgtitle(path{1})
+%     subplot(1,3,s)
+    figure
     hold on
-    plot(GavgNE(:,4))
-    plot(GavgError(:,4))
+    plot(GavgNE(:,5))
+    plot(GavgError(:,5))
     title(path{s});
     hold off
 
@@ -80,47 +82,65 @@ sgtitle(path{s})
     
     %% plot histogram of best features
 figure
-sgtitle("offline only, .25 Wsize, 0 Olap, CAR, thresh = .5")
+sgtitle("offline only, .25 Wsize, 0 Olap, CAR, thresh = 1")
 subplot(3,3,1)
-heatmap(meanSum)
+heatmap(parSum)
 title("Sums of mean features")
 subplot(3,3,2)
-heatmap(meanCount)
+heatmap(parCount)
 title("Count of mean features")
 subplot(3,3,3)
-heatmap(meanMean)
+heatmap(parMean)
 title("Mean of mean features")
 
 subplot(3,3,4)
-heatmap(maxSum)
+heatmap(narSum)
 title("Sums of max features")
 subplot(3,3,5)
-heatmap(maxCount)
+heatmap(narCount)
 title("Count of max features")
 subplot(3,3,6)
-heatmap(maxMean)
+heatmap(narMean)
 title("Mean of max features")
 
 subplot(3,3,7)
-heatmap(minSum)
+heatmap(tarSum)
 title("Sums of min features")
 subplot(3,3,8)
-heatmap(minCount)
+heatmap(tarCount)
 title("Count of min features")
 subplot(3,3,9)
-heatmap(minMean)
+heatmap(tarMean)
 title("Mean of min features")
 %% Topoplots
-    t = s-9;
-    subplot(3,2,2*t-1)
-    sgtitle("Mean of time[300-400]ms")
-    title(path{s} + ":   ER");
-    topoplot(mean(meanER(4,:,:)), chanlocs16);
+
+    figure
+    sgtitle("Max SUM, Offline Only, 1/4 Wsize, 0 Olap, BOTH, thresh = .8");
+    for f=1:len
+    subplot(2,2,f);
+    topoplot(maxSum(f,:), chanlocs16)
     colorbar
-    subplot(3,2,2*t)
-    title(path{s} + ":   NE");
-    topoplot(mean(meanNE(4,:,:)), chanlocs16);
+    end
+    
+        figure
+    sgtitle("min SUM, Offline Only, 1/4 Wsize, 0 Olap, BOTH, thresh = .8");
+    for f=1:len
+    subplot(2,2,f);
+    topoplot(minSum(f,:), chanlocs16)
     colorbar
+    end
+
+
+%     t = s-9;
+%     subplot(3,2,2*t-1)
+%     sgtitle("Mean of time[300-400]ms")
+%     title(path{s} + ":   ER");
+%     topoplot(mean(meanER(4,:,:)), chanlocs16);
+%     colorbar
+%     subplot(3,2,2*t)
+%     title(path{s} + ":   NE");
+%     topoplot(mean(meanNE(4,:,:)), chanlocs16);
+%     colorbar
 
 %% Plot feature weights
 
@@ -205,5 +225,45 @@ bar(x,y_sub1);
 legend({'mean_f_r4_c_h1','min_f_r6_c_h9','max_f_r2_c_h8'});
 title("Subject5 Feature Weights")
 ylabel("fscnca feature weight")
+%%
+C = confusionmat(results,yfit)
 
 
+% figure
+% sgtitle("Sub 1 Only, 1/4 Wsize, 0 Olap, BOTH, thresh = .8");
+% heats(meanSum, meanCount, meanMean, maxSum, maxCount, maxMean, minSum, minCount, minMean);
+
+function heats(meanSum, meanCount, meanMean, maxSum, maxCount, maxMean, minSum, minCount, minMean)
+    subplot(3,3,1)
+    heatmap(meanSum)
+    title("Sums of mean features")
+    subplot(3,3,2)
+    heatmap(meanCount)
+    title("Count of mean features")
+    subplot(3,3,3)
+    heatmap(meanMean)
+    title("Mean of mean features")
+
+    subplot(3,3,4)
+    heatmap(maxSum)
+    title("Sums of max features")
+    subplot(3,3,5)
+    heatmap(maxCount)
+    title("Count of max features")
+    subplot(3,3,6)
+    heatmap(maxMean)
+    title("Mean of max features")
+
+    subplot(3,3,7)
+    heatmap(minSum)
+    title("Sums of min features")
+    subplot(3,3,8)
+    heatmap(minCount)
+    title("Count of min features")
+    subplot(3,3,9)
+    heatmap(minMean)
+    title("Mean of min features")
+end
+
+%%
+ER

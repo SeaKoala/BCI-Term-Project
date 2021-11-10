@@ -1,4 +1,4 @@
-function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
+function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, parER, parNE, narER, narNE, tarER, tarNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
     WSize = floor(WSize*fs);	    % length of each data frame
     nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
     hop = WSize-nOlap;	          % amount to advance for next data frame
@@ -7,7 +7,7 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slo
     for channel = 1:16
         for i = 1:length(errorIndex)
 
-            startSamp = event(errorIndex(i))-beforeTrig*fs;
+            startSamp = event(errorIndex(i))-round(beforeTrig*fs);
             endSamp = event(errorIndex(i))+afterTrig*fs;
             trial = s_a(startSamp:endSamp,channel);
 
@@ -31,6 +31,11 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slo
                 meanER(frame,i,channel) = mean(segment);
                 
                 slopeER(frame,i,channel) = (segment(end) -segment(1))/length(segment);
+                
+                parER(frame,i,channel) = trapz(1/2*((segment) + abs(segment)));
+%                 fun = @(x) 1/2*(s_a(x) - abs(s_a(x)));
+                narER(frame,i,channel) = trapz(1/2*((segment) - abs(segment)));
+                tarER(frame,i,channel) = parER( frame, i, channel)+narER(frame,i,channel);
 
             end         
         end
@@ -39,7 +44,7 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slo
     for channel = 1:16
         for f = 1:length(NEIndex)
 
-            startSamp = event(NEIndex(f))-beforeTrig*fs;
+            startSamp = event(NEIndex(f))-round(beforeTrig*fs)-1;
             endSamp = event(NEIndex(f))+afterTrig*fs;
             trial = s_a(startSamp:endSamp,channel);
 
@@ -63,6 +68,11 @@ function [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slo
                 meanNE(frame,f,channel) = mean(segment);
                 
                 slopeNE(frame,f,channel) = (segment(end) -segment(1))/length(segment);
+                
+                parNE(frame, f,channel) = trapz(1/2*((segment) + abs(segment)));
+                narNE(frame,f,channel) = trapz(1/2*((segment) - abs(segment)));
+                tarNE(frame,f,channel) = parNE(frame,f, channel)+narNE(frame,f,channel);
+
 
             end         
         end
