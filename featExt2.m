@@ -23,20 +23,12 @@ function [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = 
             for frame = 1:len
                 segment = trial(((frame-1)*hop+1):((frame-1)*hop+WSize));
                 %figure;plot(segment);
-
-
                 [maxVal,maxLoc] = max(segment);
                 maxER(i, frame,channel) = maxVal;
- 
-
                 [minVal,minLoc] = min(segment);
                 minER(i, frame,channel) = minVal;
-
                 meanER(i, frame,channel) = mean(segment);
-                
-%                 fun = @(x) 1/2*(s_a(x) + abs(s_a(x)));
                 parER(i, frame,channel) = trapz(1/2*((segment) + abs(segment)));
-%                 fun = @(x) 1/2*(s_a(x) - abs(s_a(x)));
                 narER(i, frame,channel) = trapz(1/2*((segment) - abs(segment)));
                 tarER(i, frame,channel) = parER(i, frame,channel)+narER(i, frame,channel);
                 zcd = dsp.ZeroCrossingDetector;
@@ -65,10 +57,7 @@ function [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = 
                 [minVal,minLoc] = min(segment);
                 minNE(f, frame, channel) = minVal;
                 meanNE(f, frame,channel) = mean(segment);
-                
-%                 fun = @(x) 1/2*(s_a(x) + abs(s_a(x)));
                 parNE(f, frame,channel) = trapz(1/2*((segment) + abs(segment)));
-%                 fun = @(x) 1/2*(s_a(x) + abs(s_a(x)));
                 narNE(f, frame,channel) = trapz(1/2*((segment) - abs(segment)));
                 tarNE(f, frame,channel) = parNE(f, frame,channel)+narNE(f, frame,channel);
                 zcNE(f, frame,channel) =cast(zcd(segment),'double');

@@ -266,4 +266,3 @@ function heats(meanSum, meanCount, meanMean, maxSum, maxCount, maxMean, minSum, 
 end
 
 %%
-ER

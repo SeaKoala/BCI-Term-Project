@@ -11,7 +11,7 @@ data = [];
 results = [];
 
 %% for each subject
-for s=[1,2,3]
+for s=[1]
     % for s=[2,3,5,6,8,9,11,12] %,4,7,10]
     [signals, event] = loadData(path{s});
     signals = signals(:, 1:16);
@@ -35,7 +35,7 @@ for s=[1,2,3]
     
     %% Filtering
     % Spatial filtering
-    signals = spatialFiltering(signals,fs,event,errorIndex,NEIndex);
+    signals = spatialFiltering(signals,fs,event,errorIndex,NEIndex); % Returns Curently just CAR, see spatial filtering file for others,
     
     f_a = [1 10]; % alpha band
     f_b = [18 22]; % beta band
@@ -46,64 +46,29 @@ for s=[1,2,3]
     % s_b = filter(B1, B2,signals);
     
     rectSignal = s_a(:,:).^2; % signal power
-    %% Grand Average
+    
     beforeTrig = 0; % seconds of signal to be recorded before start of trial
     afterTrig = 1; % seconds of signal after trial start
     
-    %     GavgError = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    %     GavgNE = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    %     GavgRectError = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    %     GavgRectNE = zeros(round(fs*(beforeTrig+afterTrig)),16);
-    %     for(c =1:16) % for every channel
-    %         for(i=1:length(errorIndex)) % for every trial in error trial index array
-    %             for(j = 1:length(GavgError)) % for length of trial (endsample - start sample)
-    %                 GavgError(j,c) = GavgError(j)+ s_a(event.position(errorIndex(i))-round(beforeTrig*fs)+j, c);
-    %                 GavgRectError(j,c) = GavgRectError(j)+ rectSignal(event.position(errorIndex(i))-round(beforeTrig*fs)+j, c);
-    %             end
-    %         end
-    %         for(i=1:length(NEIndex))
-    %             for(j = 1:length(GavgNE))
-    %                 GavgNE(j,c) = GavgNE(j)+ s_a(event.position(NEIndex(i))-round(beforeTrig*fs)+j, c);
-    %                 GavgRectNE(j,c) = GavgRectNE(j)+ rectSignal(event.position(NEIndex(i))-round(beforeTrig*fs)+j, c);
-    %             end
-    %         end
-    %         GavgError(:,c) = GavgError(:,c)./length(errorIndex);
-    %         GavgNE(:,c) = GavgNE(:,c)./length(NEIndex);
-    %         GavgRectError(:,c) = GavgRectError(:,c)./length(errorIndex);
-    %         GavgRectNE(:,c) = GavgRectNE(:,c)./length(NEIndex);
-    %     end
-    % %     figure
-    % %     for(i=1:16)
-    % %         subplot(4,4,i)
-    % %         hold on
-    % %         plot(GavgError(:,i))
-    % %         plot(GavgNE(:,i))
-    % %         hold off
-    % %     end
-    % %     legend("Er", "NE");
-    %
-    %     i=0;
-    
     %% Feature Extraction
-    WSize = .25;
-    Olap = .5;
+    WSize = 1; % Hyperparameter
+    Olap = 0;    % Hyperparameter
     Y = [ones(length(errorIndex),1);zeros(length(NEIndex),1)];
     [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = featExt2(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event.position, fs, s_a);
-    % [varER, meanER, maxER, minER, varNE, meanNE, maxNE, minNE, slopeER, slopeNE, parER, parNE, narER, narNE, tarER, tarNE, len] = featureExt(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
     
-    dataNew = [...
+    dataNew = [... % coloumn stacked features
         reshape(maxFeat, length(Y),len*16), ...
         reshape(minFeat, length(Y),len*16), ...
         reshape(meanFeat, length(Y),len*16), ...
         reshape(tarFeat, length(Y),len*16)...
-%         reshape(parFeat, length(Y),len*16), ...
-%         reshape(narFeat, length(Y),len*16), ...
-
-        %         reshape(zcFeat, length(Y),len*16)...
+        reshape(parFeat, length(Y),len*16), ...
+        reshape(narFeat, length(Y),len*16), ...
+        
+%         reshape(zcFeat, length(Y),len*16)...
         ];
     
-    data = [data; dataNew];
-    results = [results; Y];
+    data = [data; dataNew];   % combines all sessions features into one matrix
+    results = [results; Y];   % combines all sessions trials into one "error" "no Error" vector
     for(i=1:length(results))
         if(results(i) == 1)
             results2(i) ="Error";
@@ -114,23 +79,10 @@ for s=[1,2,3]
     results2 = results2';
     
     
-    %% feature ranking
-    
-    %     meanRanks(:, :,s) = rankFeatures(len, meanFeat, Y);
-    %     parRanks(:, :,s) = rankFeatures(len, parFeat, Y);
-    %     narRanks(:, :,s) = rankFeatures(len, narFeat, Y);
-    %     tarRanks(:, :,s) = rankFeatures(len, tarFeat, Y);
-    %     maxRanks(:, :,s) = rankFeatures(len, maxFeat, Y);
-    %     minRanks(:, :,s) = rankFeatures(len, minFeat, Y);
 end
-%%
-% mdl = fscnca(data,results2);
-results =0;
-% ranks = reshape(mdl.FeatureWeights,[len,16]);
-%% Find features with FS score > 1
-% [meanSum, meanCount, meanMean] = findBestFeats(len, beforeTrig, afterTrig, meanRanks);
-% [maxSum, maxCount, maxMean] = findBestFeats(len, beforeTrig, afterTrig, maxRanks);
-% [minSum, minCount, minMean] = findBestFeats(len, beforeTrig, afterTrig, minRanks);
-% [parSum, parCount, parMean] = findBestFeats(len, beforeTrig, afterTrig, parRanks);
-% [narSum, narCount, narMean] = findBestFeats(len, beforeTrig, afterTrig, narRanks);
-% [tarSum, tarCount, tarMean] = findBestFeats(len, beforeTrig, afterTrig, tarRanks);
+
+%%  Feature Scoring
+mdl = fscnca(data,results2);  % fisher score equivilant, not sure how its different
+figure
+stem(mdl.FeatureWeights) %% shows feature weights for all features in data
+
