@@ -1,4 +1,43 @@
 %% plots
+
+ %% Topoplots for spatial filtering evalution
+
+figure;
+sgtitle("SNR")
+
+subplot(1,4,1)
+topoplot(sigRatio_preSpatial, chanlocs16)
+title("No spatial filtering");
+hcb=colorbar;
+hcb.Title.String = "SNR";
+subplot(1,4,2)
+topoplot(sigRatio_postCar, chanlocs16)
+hcb=colorbar;
+hcb.Title.String = "SNR";
+title("CAR");
+subplot(1,4,3)
+topoplot(sigRatio_postCSP, chanlocs16)
+title("CSP");
+hcb=colorbar;
+hcb.Title.String = "SNR";
+subplot(1,4,4)
+topoplot(sigRatio_postBoth, chanlocs16)
+title("CAR & CSP");
+hcb=colorbar;
+hcb.Title.String = "SNR";
+
+
+
+
+
+
+
+
+
+
+
+
+%%
 figure
 stem(mdl.FeatureWeights)
 %% heatmap of fischer score equivilant
@@ -122,7 +161,7 @@ title("Mean of min features")
     colorbar
     end
     
-        figure
+    figure
     sgtitle("min SUM, Offline Only, 1/4 Wsize, 0 Olap, BOTH, thresh = .8");
     for f=1:len
     subplot(2,2,f);
@@ -265,4 +304,3 @@ function heats(meanSum, meanCount, meanMean, maxSum, maxCount, maxMean, minSum, 
     title("Mean of min features")
 end
 
-%%

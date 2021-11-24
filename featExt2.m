@@ -1,5 +1,5 @@
 % function [data, results] = featExt2(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
-function [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = featExt2(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
+function [meanFeat, maxFeat, minFeat, tarFeat, len] = featExt2(WSize, Olap, beforeTrig, afterTrig, errorIndex, NEIndex, event, fs, s_a)
 
     WSize = floor(WSize*fs);	    % length of each data frame
     nOlap = floor(Olap*WSize);   % overlap of successive frames, half of WSize
@@ -31,8 +31,8 @@ function [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = 
                 parER(i, frame,channel) = trapz(1/2*((segment) + abs(segment)));
                 narER(i, frame,channel) = trapz(1/2*((segment) - abs(segment)));
                 tarER(i, frame,channel) = parER(i, frame,channel)+narER(i, frame,channel);
-                zcd = dsp.ZeroCrossingDetector;
-                zcER(i, frame,channel) =cast(zcd(segment),'double');
+                %zcd = dsp.ZeroCrossingDetector;
+                %zcER(i, frame,channel) =cast(zcd(segment),'double');
             end         
         end
     end
@@ -60,15 +60,15 @@ function [meanFeat, maxFeat, minFeat, parFeat, narFeat, tarFeat, zcFeat, len] = 
                 parNE(f, frame,channel) = trapz(1/2*((segment) + abs(segment)));
                 narNE(f, frame,channel) = trapz(1/2*((segment) - abs(segment)));
                 tarNE(f, frame,channel) = parNE(f, frame,channel)+narNE(f, frame,channel);
-                zcNE(f, frame,channel) =cast(zcd(segment),'double');
+                %zcNE(f, frame,channel) =cast(zcd(segment),'double');
             end         
         end
     end
     meanFeat = [meanER; meanNE];
     maxFeat = [maxER; maxNE];
     minFeat = [minER; minNE];
-    narFeat = [narER; narNE];
-    parFeat = [parER; parNE];
+    %narFeat = [narER; narNE];
+    %parFeat = [parER; parNE];
     tarFeat = [tarER; tarNE];
-    zcFeat = [zcER; zcNE];
+    %zcFeat = [zcER; zcNE];
 end

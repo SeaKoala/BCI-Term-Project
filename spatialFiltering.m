@@ -10,7 +10,7 @@ function [signal_CSP] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
     end
 
     signal_CSP = signal;
-%% CSP 
+% %% CSP 
 % 
 % beforeTrig = 0; % seconds of signal to be recorded before start of trial
 % afterTrig = 1; % seconds of signal after trial start
@@ -32,7 +32,7 @@ function [signal_CSP] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
 %         trial_NoError(channel,:,i) = signal(startSamp:endSamp,channel);
 %     end
 % end
-
+% 
 % 
 % GAVG_error(:,:) = mean(trial_error,3);
 % GAVG_NoError(:,:) = mean(trial_NoError,3);
@@ -45,6 +45,6 @@ function [signal_CSP] = spatialFiltering(signal,fs,event,errorIndex,NEIndex)
 % 
 % signal_CSP = W'*signal';
 % signal_CSP = signal_CSP';
-
-end
+% 
+% end
 
